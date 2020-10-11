@@ -5,7 +5,7 @@ WORKFLOW_NAME=alfred-helm-hub.alfredworkflow
 SCRIPT_HOME=$(dirname "$(realpath "$0")")
 echo "Home path: $SCRIPT_HOME"
 
-cd "$SCRIPT_HOME/alfred-workflow/workflow"
+cd "$SCRIPT_HOME/alfred-workflow/workflow" || exit
 git clean -nx
 
 read -p "Continue? " -n 1 -r
