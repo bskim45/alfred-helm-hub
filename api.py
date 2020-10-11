@@ -23,11 +23,13 @@ class Chart(object):
 
 class ChartClient(object):
     NAME = ''
+    CACHE_KEY = ''
     ICON_PATH = ''
 
     @classmethod
     def get_cache_key(cls, query=None):
-        return '{0}-charts-{1}'.format(cls.NAME, query).replace(os.sep, '_')
+        return '{0}-charts-{1}'.format(cls.CACHE_KEY, query) \
+            .replace(os.sep, '_')
 
     def get_charts(self, query=None):
         # type: (str) -> List[Chart]
@@ -47,7 +49,8 @@ class ChartClient(object):
 
 
 class HubClient(ChartClient):
-    NAME = 'hub'
+    NAME = 'hub.helm.sh'
+    CACHE_KEY = 'hub'
     ICON_PATH = 'icons/hub.png'
 
     CHART_SERVICE_BASE_URL = 'https://hub.helm.sh/api/chartsvc'
@@ -79,16 +82,17 @@ class HubClient(ChartClient):
 
 
 class ChartCenterClient(ChartClient):
-    NAME = 'chartcenter'
+    NAME = 'chartcenter.io'
+    CACHE_KEY = 'chartcenter'
     ICON_PATH = 'icons/chartcenter.png'
 
-    CENTER_API_BASE_URL = 'https://chartcenter.io/api'
-    CENTER_API_SEARCH_URL = CENTER_API_BASE_URL + '/ui/search'
-    CENTER_BASE_URL = 'https://chartcenter.io'
+    API_BASE_URL = 'https://chartcenter.io/api'
+    API_SEARCH_URL = API_BASE_URL + '/ui/search'
+    BASE_URL = 'https://chartcenter.io'
 
     def get_chart_request(self, query=None):
         params = dict(name_fragment=query)
-        r = web.get(self.CENTER_API_SEARCH_URL, params)
+        r = web.get(self.API_SEARCH_URL, params)
 
         r.raise_for_status()
 
@@ -109,3 +113,42 @@ class ChartCenterClient(ChartClient):
 
     def get_chart_url(self, chart_id):
         return 'https://chartcenter.io/{0}'.format(chart_id)
+
+
+class ArtifactHubClient(ChartClient):
+    NAME = 'artifacthub.io'
+    CACHE_KEY = 'artifacthub'
+    ICON_PATH = 'icons/artifacthub.png'
+
+    API_BASE_URL = 'https://artifacthub.io/api'
+    API_SEARCH_URL = API_BASE_URL + '/v1/packages/search'
+    BASE_URL = 'https://artifacthub.io'
+
+    def get_chart_request(self, query=None):
+        params = dict(
+            facets=False,
+            limit=30, offset=0,
+            kind=0,  # helm chart
+            ts_query_web=query
+        )
+        r = web.get(self.API_SEARCH_URL, params)
+
+        r.raise_for_status()
+
+        result = r.json()
+
+        charts = [
+            Chart(
+                '{0}/{1}'.format(chart['repository']['name'], chart['name']),
+                chart['description'],
+                chart['version'],
+                self.get_chart_url('{0}/{1}'.format(chart['repository']['name'],
+                                                    chart['name'])),
+                self.ICON_PATH,
+            )
+            for chart in result['data']['packages']
+        ]
+        return charts
+
+    def get_chart_url(self, chart_id):
+        return '{0}/packages/helm/{1}'.format(self.BASE_URL, chart_id)

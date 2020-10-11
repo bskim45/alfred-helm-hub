@@ -9,12 +9,31 @@ from __future__ import print_function, unicode_literals
 
 import sys
 
-from api import ChartCenterClient, HubClient
-from utils import create_workflow, is_chartcenter_enabled, is_hub_enabled
+from api import ArtifactHubClient, ChartCenterClient, HubClient
+from utils import create_workflow, is_artifacthub_enabled, \
+    is_chartcenter_enabled, is_hub_enabled
 from workflow import ICON_INFO
 
 
 def add_default_item(wf):
+    if is_artifacthub_enabled(wf):
+        wf.add_item(
+            title='Go to ArtifactHub',
+            subtitle=ArtifactHubClient.BASE_URL,
+            arg=ArtifactHubClient.BASE_URL,
+            valid=True,
+            icon=wf.workflowfile(ArtifactHubClient.ICON_PATH)
+        )
+
+    if is_chartcenter_enabled(wf):
+        wf.add_item(
+            title='Go to ChartCenter',
+            subtitle=ChartCenterClient.BASE_URL,
+            arg=ChartCenterClient.BASE_URL,
+            valid=True,
+            icon=wf.workflowfile(ChartCenterClient.ICON_PATH)
+        )
+
     if is_hub_enabled(wf):
         wf.add_item(
             title='Go to Helm Hub',
@@ -22,15 +41,6 @@ def add_default_item(wf):
             arg=HubClient.HUB_BASE_URL,
             valid=True,
             icon=wf.workflowfile(HubClient.ICON_PATH)
-        )
-
-    if is_chartcenter_enabled(wf):
-        wf.add_item(
-            title='Go to ChartCenter',
-            subtitle=ChartCenterClient.CENTER_BASE_URL,
-            arg=ChartCenterClient.CENTER_BASE_URL,
-            valid=True,
-            icon=wf.workflowfile(ChartCenterClient.ICON_PATH)
         )
 
 
@@ -65,6 +75,22 @@ def main(wf):
 
     charts = []
 
+    if is_artifacthub_enabled(wf):
+        def search():
+            api = ArtifactHubClient()
+            return api.get_charts(query)
+
+        charts.extend(wf.cached_data(ArtifactHubClient.get_cache_key(query),
+                                     search, max_age=30))
+
+    if is_chartcenter_enabled(wf):
+        def search():
+            api = ChartCenterClient()
+            return api.get_charts(query)
+
+        charts.extend(wf.cached_data(ChartCenterClient.get_cache_key(query),
+                                     search, max_age=30))
+
     if is_hub_enabled(wf):
         def search():
             api = HubClient()
@@ -74,14 +100,6 @@ def main(wf):
             return api.get_charts(q)
 
         charts.extend(wf.cached_data(HubClient.get_cache_key(query),
-                                     search, max_age=30))
-
-    if is_chartcenter_enabled(wf):
-        def search():
-            api = ChartCenterClient()
-            return api.get_charts(query)
-
-        charts.extend(wf.cached_data(ChartCenterClient.get_cache_key(query),
                                      search, max_age=30))
 
     log.info('%d charts found', len(charts))
@@ -107,17 +125,23 @@ def main(wf):
                 subtitle='Try to search without a repository name',
                 autocomplete=chart_name)
 
-        if is_hub_enabled(wf):
+        if is_artifacthub_enabled(wf):
             wf.add_item('No charts found for "{0}"'.format(query),
-                        subtitle='Click to see the results in Helm Hub',
-                        arg='{0}/charts?q={1}'.format(HubClient.HUB_BASE_URL,
-                                                      query),
+                        subtitle='Click to search in ArtifactHub',
+                        arg=ArtifactHubClient.BASE_URL,
                         valid=True)
 
         if is_chartcenter_enabled(wf):
             wf.add_item('No charts found for "{0}"'.format(query),
                         subtitle='Click to search in ChartCenter',
-                        arg=ChartCenterClient.CENTER_BASE_URL,
+                        arg=ChartCenterClient.BASE_URL,
+                        valid=True)
+
+        if is_hub_enabled(wf):
+            wf.add_item('No charts found for "{0}"'.format(query),
+                        subtitle='Click to see the results in Helm Hub',
+                        arg='{0}/charts?q={1}'.format(HubClient.HUB_BASE_URL,
+                                                      query),
                         valid=True)
     else:
         add_default_item(wf)
