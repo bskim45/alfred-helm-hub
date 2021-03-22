@@ -10,6 +10,7 @@ from __future__ import print_function, unicode_literals
 import sys
 
 from api import ArtifactHubClient, ChartCenterClient, HubClient
+from migration import migrate
 from utils import create_workflow, is_artifacthub_enabled, \
     is_chartcenter_enabled, is_hub_enabled
 from workflow import ICON_INFO
@@ -61,6 +62,9 @@ def main(wf):
         query = None
 
     log.info('user query: "%s"', query)
+
+    # do workflow migration
+    migrate(wf)
 
     if wf.update_available:
         wf.add_item('New version is available',

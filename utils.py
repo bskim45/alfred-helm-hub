@@ -25,6 +25,7 @@ DEFAULT_REPO_CONFIG = {
 }
 
 DEFAULT_REPO_CONFIG[HubClient.NAME]['enabled'] = False
+DEFAULT_REPO_CONFIG[ChartCenterClient.NAME]['enabled'] = False
 
 
 def create_workflow():
