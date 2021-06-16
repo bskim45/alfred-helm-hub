@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.3.0 (2021-06-16)
+
+### Changelog
+- Fix `artifacthub.io` search (api changes in `artifacthub.io`)
+
 ## v1.2.0 (2021-03-22)
 
 ### Breaking Changes
