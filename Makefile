@@ -16,9 +16,11 @@ clean:
 
 .PHONY: bump_version
 bump_version:
-ifeq ($(strip $(version)),)
-$(error Usage: make bump_version version=1.0.0)
-endif
+	@if [ -z $(version) ]; then \
+		echo Usage: make bump_version version=1.0.0; \
+		exit 1; \
+	fi;
+	@echo Current version: $(shell cat $(VERSION_FILE))
 	@(read -e -p "Bump to version $(version)? [y/N]: " ans && case "$$ans" in [yY]) true;; *) false;; esac)
-	echo $version > $(version)
-	sed -i.bak 's#<string>[0-9]*.[0-9]*.[0-9]*</string>#<string>$(version)</string>#' info.plist
+	@echo $(version) > version
+	@sed -i.bak 's#<string>[0-9]*.[0-9]*.[0-9]*</string>#<string>$(version)</string>#' info.plist
