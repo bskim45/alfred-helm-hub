@@ -6,7 +6,7 @@
 # MIT Licence http://opensource.org/licenses/MIT
 from __future__ import unicode_literals, print_function
 
-from api import ChartCenterClient, HubClient
+from api import ChartCenterClient
 from workflow import Workflow3
 from workflow.update import Version
 
