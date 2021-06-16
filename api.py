@@ -152,7 +152,7 @@ class ArtifactHubClient(ChartClient):
                                                     chart['name'])),
                 self.ICON_PATH,
             )
-            for chart in result['data']['packages']
+            for chart in result['packages']
         ]
         return charts
 
