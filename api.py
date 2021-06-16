@@ -20,6 +20,12 @@ class Chart(object):
         self.web_url = web_url
         self.icon = icon
 
+    def __str__(self):
+        return self.__unicode__().encode('utf-8')
+
+    def __unicode__(self):
+        return '{0} ({1})'.format(self.chart_id, self.version)
+
 
 class ChartClient(object):
     NAME = ''
