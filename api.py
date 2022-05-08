@@ -1,15 +1,16 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # encoding: utf-8
 #
-# Copyright (c) 2020 Bumsoo Kim <bskim45@gmail.com>
+# Copyright (c) 2022 Bumsoo Kim <bskim45@gmail.com>
 #
 # MIT Licence http://opensource.org/licenses/MIT
 
-from __future__ import print_function, unicode_literals
+from __future__ import annotations
 
 import os
+from typing import List
 
-from workflow import web
+import requests
 
 
 class Chart(object):
@@ -34,8 +35,9 @@ class ChartClient(object):
 
     @classmethod
     def get_cache_key(cls, query=None):
-        return '{0}-charts-{1}'.format(cls.CACHE_KEY, query) \
-            .replace(os.sep, '_')
+        return '{0}-charts-{1}'.format(cls.CACHE_KEY, query).replace(
+            os.sep, '_'
+        )
 
     def get_charts(self, query=None):
         # type: (str) -> List[Chart]
@@ -50,7 +52,7 @@ class ChartClient(object):
         raise NotImplementedError()
 
     def get_chart_url(self, chart_id):
-        # type: (Union[str, unicode]) -> unicode
+        # type: (str) -> str
         raise NotImplementedError()
 
 
@@ -65,7 +67,7 @@ class HubClient(ChartClient):
 
     def get_chart_request(self, query=None):
         params = dict(q=query)
-        r = web.get(self.CHART_SERVICE_SEARCH_URL, params)
+        r = requests.get(self.CHART_SERVICE_SEARCH_URL, params)
 
         r.raise_for_status()
 
@@ -75,7 +77,9 @@ class HubClient(ChartClient):
             Chart(
                 chart['id'],
                 chart['attributes']['description'],
-                chart['relationships']['latestChartVersion']['data']['version'],
+                chart['relationships']['latestChartVersion']['data'][
+                    'version'
+                ],
                 self.get_chart_url(chart['id']),
                 self.ICON_PATH,
             )
@@ -98,7 +102,7 @@ class ChartCenterClient(ChartClient):
 
     def get_chart_request(self, query=None):
         params = dict(name_fragment=query)
-        r = web.get(self.API_SEARCH_URL, params)
+        r = requests.get(self.API_SEARCH_URL, params)
 
         r.raise_for_status()
 
@@ -109,8 +113,9 @@ class ChartCenterClient(ChartClient):
                 '{0}/{1}'.format(chart['namespace'], chart['name']),
                 chart['description'],
                 chart['latest_chart_version'],
-                self.get_chart_url('{0}/{1}'.format(chart['namespace'],
-                                                    chart['name'])),
+                self.get_chart_url(
+                    '{0}/{1}'.format(chart['namespace'], chart['name'])
+                ),
                 self.ICON_PATH,
             )
             for chart in result['chart']
@@ -133,11 +138,12 @@ class ArtifactHubClient(ChartClient):
     def get_chart_request(self, query=None):
         params = dict(
             facets=False,
-            limit=30, offset=0,
+            limit=30,
+            offset=0,
             kind=0,  # helm chart
-            ts_query_web=query
+            ts_query_web=query,
         )
-        r = web.get(self.API_SEARCH_URL, params)
+        r = requests.get(self.API_SEARCH_URL, params)
 
         r.raise_for_status()
 
@@ -148,8 +154,11 @@ class ArtifactHubClient(ChartClient):
                 '{0}/{1}'.format(chart['repository']['name'], chart['name']),
                 chart['description'],
                 chart['version'],
-                self.get_chart_url('{0}/{1}'.format(chart['repository']['name'],
-                                                    chart['name'])),
+                self.get_chart_url(
+                    '{0}/{1}'.format(
+                        chart['repository']['name'], chart['name']
+                    )
+                ),
                 self.ICON_PATH,
             )
             for chart in result['packages']

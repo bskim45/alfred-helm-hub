@@ -1,16 +1,17 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # encoding: utf-8
 #
-# Copyright (c) 2020 Bumsoo Kim <bskim45@gmail.com>
+# Copyright (c) 2022 Bumsoo Kim <bskim45@gmail.com>
 #
 # MIT Licence http://opensource.org/licenses/MIT
 
-from __future__ import print_function, unicode_literals
+from __future__ import annotations
 
 import sys
 
-from utils import create_workflow
 from workflow import Workflow3
+
+from utils import create_workflow
 
 
 def list_repo(wf):
@@ -23,7 +24,7 @@ def list_repo(wf):
             subtitle='Enabled' if conf['enabled'] else 'Disabled',
             arg=name,
             valid=True,
-            icon=wf.workflowfile(conf['icon'])
+            icon=wf.workflowfile(conf['icon']),
         )
 
     wf.send_feedback()
@@ -39,8 +40,9 @@ def toggle_repo(wf, repo_name):
 
     wf.settings.save()
 
-    print('{} is {}'.format(
-        repo_name, 'disabled' if prev_enabled else 'enabled'))
+    print(
+        '{} is {}'.format(repo_name, 'disabled' if prev_enabled else 'enabled')
+    )
 
 
 def main(wf):

@@ -11,7 +11,7 @@ Search helm charts from hub
 
 <img src="docs/search.png" width="600" alt="helm nginx"/>
 
-Press `Enter⏎` will open browser and navigate to the chart page. 
+Press `Enter⏎` will open browser and navigate to the chart page.
 
 By default, this workflow shows the results from both `chartcenter.io` and `hub.helm.sh`.
 You can toggle this behavior:
