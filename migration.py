@@ -1,14 +1,16 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # encoding: utf-8
 #
-# Copyright (c) 2020 Bumsoo Kim <bskim45@gmail.com>
+# Copyright (c) 2022 Bumsoo Kim <bskim45@gmail.com>
 #
 # MIT Licence http://opensource.org/licenses/MIT
-from __future__ import unicode_literals, print_function
 
-from api import ChartCenterClient
+from __future__ import annotations
+
 from workflow import Workflow3
 from workflow.update import Version
+
+from api import ChartCenterClient
 
 
 def migrate(wf):
@@ -16,7 +18,9 @@ def migrate(wf):
     if not wf.last_version_run or wf.last_version_run == wf.version:
         return
 
-    wf.logger.info('Version upgraded: {0} -> {1}'.format(wf.last_version_run, wf.version))
+    wf.logger.info(
+        'Version upgraded: {0} -> {1}'.format(wf.last_version_run, wf.version)
+    )
 
     if wf.last_version_run < Version('1.2.0'):
         migrate_to_1_2_0(wf)
@@ -27,4 +31,3 @@ def migrate_to_1_2_0(wf):
     # type: (Workflow3) -> None
     wf.settings['hubs'][ChartCenterClient.NAME]['enabled'] = False
     wf.settings.save()
-

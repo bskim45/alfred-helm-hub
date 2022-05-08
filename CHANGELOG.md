@@ -9,8 +9,8 @@
 
 ### Breaking Changes
 
-[Jfrog is sunsetting Bintray, JCenter, GoCenter, and ChartCenter](https://jfrog.com/center-sunset/).  
-`chartcenter.io` is now disabled by default, and also disabled automatically upon version upgrade.  
+[Jfrog is sunsetting Bintray, JCenter, GoCenter, and ChartCenter](https://jfrog.com/center-sunset/).
+`chartcenter.io` is now disabled by default, and also disabled automatically upon version upgrade.
 Support for `hub.helm.sh` and `chartcenter.io` will be removed in next release.
 
 ### Changelog
@@ -21,8 +21,8 @@ Support for `hub.helm.sh` and `chartcenter.io` will be removed in next release.
 
 ### Breaking Changes
 
-`hub.helm.sh` is no longer enabled by default, in flavor of `artifacthub.io`.  
-You still can enable/disable individual hub repo by hub repo command.  
+`hub.helm.sh` is no longer enabled by default, in flavor of `artifacthub.io`.
+You still can enable/disable individual hub repo by hub repo command.
 Users upgrading from previous version is not affected. (`artifacthub.io` is enabled by default)
 
 ### Changelog

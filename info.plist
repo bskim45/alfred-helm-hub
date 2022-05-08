@@ -88,7 +88,7 @@
 				<key>runningsubtext</key>
 				<string>Listing repositories...</string>
 				<key>script</key>
-				<string>python hub_repo.py repo list</string>
+				<string>/usr/bin/env python3 hub_repo.py repo list</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
@@ -117,7 +117,7 @@
 				<key>escaping</key>
 				<integer>0</integer>
 				<key>script</key>
-				<string>python hub_repo.py repo toggle "{query}"</string>
+				<string>/usr/bin/env python3 hub_repo.py repo toggle "{query}"</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
@@ -200,7 +200,7 @@
 				<key>runningsubtext</key>
 				<string>Searching helm hub for "{query}"</string>
 				<key>script</key>
-				<string>python search.py "{query}"</string>
+				<string>/usr/bin/env python3 search.py "{query}"</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
