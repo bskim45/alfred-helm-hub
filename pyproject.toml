@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "alfred-helm-hub"
-version = "1.3.0"
+version = "2.0.0"
 description = ""
 authors = ["Bumsoo Kim <bskim45@gmail.com>"]
 license = "MIT"
